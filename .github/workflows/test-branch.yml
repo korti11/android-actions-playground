@@ -56,7 +56,9 @@ jobs:
         with:
           java-version: 1.8
       - name: Run unit tests
+        if: env.COLUMN_NAME == 'In testing'
         run: ./gradlew testDebugUnitTest
         continue-on-error: true
       - name: Report
+        if: env.COLUMN_NAME == 'In testing'
         uses: asadmansr/android-test-report-action@v1.0.0
