@@ -27,7 +27,7 @@ jobs:
       - name: Write column name
         shell: bash
         run: |
-          echo ::set-env name=COLUMN_NAME::${{steps.json.outputs.name}}
+          echo "::set-env name=COLUMN_NAME::${{steps.json.outputs.name}}"
   run-unittest:
     name: Run unittests for branch
     needs: is-right-project-column
