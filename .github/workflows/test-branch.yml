@@ -24,15 +24,10 @@ jobs:
         with:
           json: ${{steps.project_column.outputs.data}}
           name: "name"
-      - name: Write result
+      - name: Write column name
         shell: bash
         run: |
           export COLUMN_NAME="${{steps.json.outputs.name}}"
-      - name: Upload result
-        uses: actions/upload-artifact@v1
-        with:
-          name: column-result
-          path: column-result.txt
   run-unittest:
     name: Run unittests for branch
     needs: is-right-project-column
