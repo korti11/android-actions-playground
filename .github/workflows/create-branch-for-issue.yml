@@ -1,0 +1,33 @@
+name: Create branch for issue
+
+on:
+  project_card:
+    types: [moved]
+
+jobs:
+  create-branch:
+    name: Create branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get project column name
+        id: project_column
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        uses: octokit/request-action@v1.x
+        with:
+          route: GET ${{github.event.project_card.column_url}}
+          Authorization: token ${{secrets.GITHUB_TOKEN}}
+          mediaType: '{"previews": ["inertia"]}'
+      - name: Parse to JSON
+        id: json
+        uses: gr2m/get-json-paths-action@v1.x
+        with:
+          json: ${{steps.project_column.outputs.data}}
+          name: "name"
+      - name: Create branch
+        if: steps.json.outputs.name == 'In progress'
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        uses: peterjgrainger/action-create-branch@v1.0.0
+        with:
+          branch: ${{github.event.project_card.node_id}}
