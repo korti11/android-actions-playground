@@ -1,0 +1,41 @@
+name: Test branch
+
+on:
+  project_card:
+    types: [moved]
+
+jobs:
+  is-right-project-column:
+    name: Check if it is the In testing column
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get project column name
+        id: project_column
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        uses: octokit/request-action@v1.x
+        with:
+          route: GET ${{github.event.project_card.column_url}}
+          Authorization: token ${{secrets.GITHUB_TOKEN}}
+          mediaType: '{"previews": ["inertia"]}'
+      - name: Get column name from JSON
+        id: json
+        uses: gr2m/get-json-paths-action@v1.x
+        with:
+          json: ${{steps.project_column.outputs.data}}
+          name: "name"
+      - name: Write result
+        shell: bash
+        run: |
+          export COLUMN_NAME="${{steps.json.outputs.name}}
+      - name: Upload result
+        uses: actions/upload-artifact@v1
+        with:
+          name: column-result
+          path: column-result.txt
+  run-unittest:
+    name: Run unittests for branch
+    needs: is-right-project-column
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ${{env.COLUMN_NAME}}
