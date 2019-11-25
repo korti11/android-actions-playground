@@ -67,8 +67,9 @@ jobs:
     needs: is-right-project-column
     runs-on: macOS-latest
     strategy:
-      api-level: [21, 28, 29]
-      target: [default, google_apis]
+      matrix:
+        api-level: [21, 28, 29]
+        target: [default, google_apis]
     steps:
       - name: Downlaod column result
         uses: actions/download-artifact@v1
