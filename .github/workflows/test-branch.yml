@@ -66,10 +66,6 @@ jobs:
     name: Run integration tests for branch
     needs: is-right-project-column
     runs-on: macOS-latest
-    strategy:
-      matrix:
-        api-level: [21, 28, 29]
-        target: [default, google_apis]
     steps:
       - name: Downlaod column result
         uses: actions/download-artifact@v1
@@ -87,8 +83,5 @@ jobs:
         if: env.COLUMN_NAME == 'In testing'
         uses: reactivecircus/android-emulator-runner@v1
         with:
-          api-level: ${{matrix.api-level}}
-          target: ${{matrix.target}}
-          arch: x86_64
-          profile: Pixel
+          api-level: 29
           script: ./gradlew connectedCheck
