@@ -27,7 +27,7 @@ jobs:
       - name: Write result
         shell: bash
         run: |
-          export COLUMN_NAME="${{steps.json.outputs.name}}
+          export COLUMN_NAME="${{steps.json.outputs.name}}"
       - name: Upload result
         uses: actions/upload-artifact@v1
         with:
