@@ -27,7 +27,7 @@ jobs:
       - name: Write column name
         shell: bash
         run: |
-          expr ${{steps.json.outputs.name}} > column-result.txt
+          expr "${{steps.json.outputs.name}}" > column-result.txt
       - name: Upload column name
         uses: actions/upload-artifact@v1
         with:
