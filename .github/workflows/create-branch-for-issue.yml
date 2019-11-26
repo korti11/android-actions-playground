@@ -47,7 +47,7 @@ jobs:
         id: formated_title
         uses: frabert/replace-string-action@v1.1
         with:
-          pattern: '\\s+'
+          pattern: '[ ]+'
           flags: 'g'
           string: ${{steps.issue_json.outputs.title}}
           replace-with: '-'
