@@ -51,6 +51,8 @@ jobs:
           flags: 'g'
           string: ${{steps.issue_json.outputs.title}}
           replace-with: '-'
+      - run: echo ${{steps.formated_title.outputs.replaced}}
+        if: steps.column_json.outputs.name == 'In progress'
       - name: Create branch
         if: steps.column_json.outputs.name == 'In progress'
         env:
