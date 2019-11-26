@@ -47,7 +47,8 @@ jobs:
         id: formated_title
         uses: frabert/replace-string-action@v1.1
         with:
-          pattern: '/\s+/g'
+          pattern: '\\s+'
+          flags: 'g'
           string: ${{steps.issue_json.outputs.title}}
           replace-with: '-'
       - name: Create branch
