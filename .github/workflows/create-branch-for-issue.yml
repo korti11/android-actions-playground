@@ -33,13 +33,12 @@ jobs:
           route: GET ${{github.event.project_card.content_url}}
           Authorization: token ${{secrets.GITHUB_TOKEN}}
           mediaType: '{"previews": ["symmetra"]}'
-      - run: echo ${{steps.issue.outputs.data}}
       - name: Parse to JSON
         id: issue_json
         uses: gr2m/get-json-paths-action@v1.x
         with:
           json: ${{steps.issue.outputs.data}}
-          id: "id"
+          number: "number"
           title: "title"
       - name: Create branch
         if: steps.column_json.outputs.name == 'In progress'
@@ -47,4 +46,4 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         uses: peterjgrainger/action-create-branch@v1.0.0
         with:
-          branch: ${{format('feature/{0}_{1}', steps.issue_json.output.id, steps.issue_json.output.title)}}
+          branch: ${{format('feature/{0}_{1}', steps.issue_json.outputs.number, steps.issue_json.outputs.title)}}
