@@ -46,4 +46,4 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         uses: peterjgrainger/action-create-branch@v1.0.0
         with:
-          branch: format('feature/{0}_{1}', ${{steps.issue_json.output.id}}, ${{steps.issue_json.output.title}})
+          branch: ${{format('feature/{0}_{1}', steps.issue_json.output.id, steps.issue_json.output.title)}}
