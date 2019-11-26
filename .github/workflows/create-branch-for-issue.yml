@@ -25,6 +25,7 @@ jobs:
           json: ${{steps.project_column.outputs.data}}
           name: "name"
       - name: Get issue
+        if: steps.column_json.outputs.name == 'In progress'
         id: issue
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -34,6 +35,7 @@ jobs:
           Authorization: token ${{secrets.GITHUB_TOKEN}}
           mediaType: '{"previews": ["symmetra"]}'
       - name: Parse to JSON
+        if: steps.column_json.outputs.name == 'In progress'
         id: issue_json
         uses: gr2m/get-json-paths-action@v1.x
         with:
@@ -41,6 +43,7 @@ jobs:
           number: "number"
           title: "title"
       - name: Formate title
+        if: steps.column_json.outputs.name == 'In progress'
         id: formated_title
         uses: frabert/replace-string-action@v1.1
         with:
