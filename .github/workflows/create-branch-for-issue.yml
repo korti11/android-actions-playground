@@ -21,15 +21,31 @@ jobs:
           Authorization: token ${{secrets.GITHUB_TOKEN}}
           mediaType: '{"previews": ["inertia"]}'
       - name: Parse to JSON
-        id: json
+        id: column_json
         uses: gr2m/get-json-paths-action@v1.x
         with:
           json: ${{steps.project_column.outputs.data}}
           name: "name"
+      - name: Get issue
+        id: issue
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        uses: octokit/request-action@v1.x
+        with:
+          route: GET ${{github.event.project_card.content_url}}
+          Authorization: token ${{secrets.GITHUB_TOKEN}}
+          mediaType: '{"previews": ["symmetra"]}'
+      - name: Parse to JSON
+        id: issue_json
+        uses: gr2m/get-json-paths-action@v1.x
+        with:
+          json: ${{steps.issue.outputs.data}}
+          id: "id"
+          title: "title"
       - name: Create branch
-        if: steps.json.outputs.name == 'In progress'
+        if: steps.column_json.outputs.name == 'In progress'
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         uses: peterjgrainger/action-create-branch@v1.0.0
         with:
-          branch: ${{github.event.project_card.node_id}}
+          branch: 'feature/' ${{steps.issue_json.output.id}} '_' ${{steps.issue_json.output.title}}
