@@ -33,6 +33,7 @@ jobs:
           route: GET ${{github.event.project_card.content_url}}
           Authorization: token ${{secrets.GITHUB_TOKEN}}
           mediaType: '{"previews": ["symmetra"]}'
+      - run: echo ${{steps.issue.outputs.data}}
       - name: Parse to JSON
         id: issue_json
         uses: gr2m/get-json-paths-action@v1.x
