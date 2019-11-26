@@ -40,10 +40,17 @@ jobs:
           json: ${{steps.issue.outputs.data}}
           number: "number"
           title: "title"
+      - name: Formate title
+        id: formated_title
+        uses: frabert/replace-string-action@v1.1
+        with:
+          pattern: '/\s+/g'
+          string: ${{steps.issue_json.outputs.title}}
+          replace-with: '-'
       - name: Create branch
         if: steps.column_json.outputs.name == 'In progress'
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         uses: peterjgrainger/action-create-branch@v1.0.0
         with:
-          branch: ${{format('feature/{0}_{1}', steps.issue_json.outputs.number, steps.issue_json.outputs.title)}}
+          branch: ${{format('feature/{0}-{1}', steps.issue_json.outputs.number, steps.formated_title.outputs.replaced)}}
