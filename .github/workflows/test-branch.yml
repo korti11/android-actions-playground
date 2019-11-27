@@ -66,10 +66,17 @@ jobs:
         with:
           json: ${{steps.find_branch.outputs.data}}
           branch_name: "[0].ref"
+      - name: Formate title
+        id: formated_branch
+        uses: frabert/replace-string-action@v1.1
+        with:
+          pattern: 'refs/heads/'
+          string: ${{steps.branch_json.outputs.branch_name}}
+          replace-with: ''
       - name: Write branch name
         shell: bash
         run: |
-          expr "${{steps.branch_json.outputs.branch_name}}" > branch-name.txt
+          expr "${{steps.formated_branch.outputs.replaced}}" > branch-name.txt
       - name: Upload branch name
         uses: actions/upload-artifact@v1
         with:
