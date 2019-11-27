@@ -66,17 +66,17 @@ jobs:
         with:
           json: ${{steps.find_branch.outputs.data}}
           branch_name: "[0].ref"
-      - name: Formate title
-        id: formated_branch
-        uses: frabert/replace-string-action@v1.1
-        with:
-          pattern: 'refs/heads/'
-          string: ${{steps.branch_json.outputs.branch_name}}
-          replace-with: ''
+#      - name: Formate title
+#        id: formated_branch
+#        uses: frabert/replace-string-action@v1.1
+#        with:
+#          pattern: 'refs/heads/'
+#          string: ${{steps.branch_json.outputs.branch_name}}
+#          replace-with: ''
       - name: Write branch name
         shell: bash
         run: |
-          expr "${{steps.formated_branch.outputs.replaced}}" > branch-name.txt
+          expr "${{steps.branch_json.outputs.branch_name}}" > branch-name.txt
       - name: Upload branch name
         uses: actions/upload-artifact@v1
         with:
@@ -157,6 +157,11 @@ jobs:
         run: |
           value=`cat branch-name/branch-name.txt`
           echo "::set-env name=BRANCH_NAME::$value"
+      - name: Check out branch
+        if: env.COLUMN_NAME == 'In testing'
+        uses: actions/checkout@v1
+        with:
+          ref: ${{env.BRANCH_NAME}}
       - name: Create pull request
         if: env.COLUMN_NAME == 'In testing'
         uses: repo-sync/pull-request@v2.0.1
