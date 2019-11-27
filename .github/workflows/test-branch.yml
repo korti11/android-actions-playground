@@ -66,25 +66,20 @@ jobs:
         with:
           json: ${{steps.find_branch.outputs.data}}
           branch_name: "[0].ref"
-#      - name: Formate title
-#        id: formated_branch
-#        uses: frabert/replace-string-action@v1.1
-#        with:
-#          pattern: 'refs/heads/'
-#          string: ${{steps.branch_json.outputs.branch_name}}
-#          replace-with: ''
       - name: Write branch name
+        if: steps.branch_json.outputs.branch_name != ""
         shell: bash
         run: |
           expr "${{steps.branch_json.outputs.branch_name}}" > branch-name.txt
       - name: Upload branch name
+        if: steps.branch_json.outputs.branch_name != ""
         uses: actions/upload-artifact@v1
         with:
           name: branch-name
           path: branch-name.txt
-  run-unittest:
+  run-unit-tests:
     name: Run unit tests for branch
-    needs: is-right-project-column
+    needs: [is-right-project-column, get-branch-name]
     runs-on: ubuntu-latest
     steps:
       - name: Downlaod column result
@@ -96,9 +91,20 @@ jobs:
         run: |
           value=`cat column-result/column-result.txt`
           echo "::set-env name=COLUMN_NAME::$value"
+      - name: Download branch name
+        uses: actions/download-artifact@v1
+        with:
+          name: branch-name
+      - name: Write env variable
+        shell: bash
+        run: |
+          value=`cat branch-name/branch-name.txt`
+          echo "::set-env name=BRANCH_NAME::$value"
       - name: Checkout branch
         if: env.COLUMN_NAME == 'In testing'
         uses: actions/checkout@v1
+        with:
+          ref: ${{env.BRANCH_NAME}}
       - name: Setup JDK 1.8
         if: env.COLUMN_NAME == 'In testing'
         uses: actions/setup-java@v1
@@ -113,7 +119,7 @@ jobs:
 #        uses: asadmansr/android-test-report-action@master
   run-integration-tests:
     name: Run integration tests for branch
-    needs: is-right-project-column
+    needs: [is-right-project-column, get-branch-name]
     runs-on: macOS-latest
     steps:
       - name: Downlaod column result
@@ -125,9 +131,20 @@ jobs:
         run: |
           value=`cat column-result/column-result.txt`
           echo "::set-env name=COLUMN_NAME::$value"
+      - name: Download branch name
+        uses: actions/download-artifact@v1
+        with:
+          name: branch-name
+      - name: Write env variable
+        shell: bash
+        run: |
+          value=`cat branch-name/branch-name.txt`
+          echo "::set-env name=BRANCH_NAME::$value"
       - name: Checkout branch
         if: env.COLUMN_NAME == 'In testing'
         uses: actions/checkout@v1
+        with:
+          ref: ${{env.BRANCH_NAME}}
       - name: Run integration tests
         if: env.COLUMN_NAME == 'In testing'
         uses: reactivecircus/android-emulator-runner@v1
@@ -136,7 +153,7 @@ jobs:
           script: ./gradlew connectedCheck
   pull-request-on-feature-branch:
     name: Pull request from feature branch to master branch
-    needs: [run-unittest, run-integration-tests, get-branch-name]
+    needs: [run-unit-tests, run-integration-tests, get-branch-name]
     runs-on: ubuntu-latest
     steps:
       - name: Download column result
