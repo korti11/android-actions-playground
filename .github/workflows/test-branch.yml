@@ -54,6 +54,8 @@ jobs:
           number: "number"
       - name: Find branch
         id: find_branch
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         uses: octokit/request-action@v1.x
         with:
           route: GET ${{format('/repos/{0}/{1}/git/matching-refs/feature-{2}', 'korti11', 'android-actions-playground', steps.issue_json.outputs.number)}}
