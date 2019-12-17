@@ -1,0 +1,16 @@
+name: Unlock git-crypt
+
+on: push
+
+jobs:
+  unlock:
+    runs-on: macOS-latest
+    steps:
+      - name: Install git-crypt
+        run: brew install git-crypt
+      - name: Create key file
+        run: echo ${{env.GIT_CRYPT_KEY}} | base64 --decode > key
+      - name: Checkout branch
+        uses: actions/checkout@v1
+      - name: Unlock
+        run: git-crypt unlock key
