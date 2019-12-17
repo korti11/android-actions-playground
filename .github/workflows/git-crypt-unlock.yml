@@ -10,6 +10,8 @@ jobs:
         run: brew install git-crypt
       - name: Create key file
         run: echo ${{env.GIT_CRYPT_KEY}} | base64 --decode > key
+        env:
+          GIT_CRYPT_KEY: ${{secrets.GIT_CRYPT_KEY}}
       - name: Checkout branch
         uses: actions/checkout@v1
       - name: Unlock
