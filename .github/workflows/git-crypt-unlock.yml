@@ -9,7 +9,7 @@ jobs:
       - name: Install git-crypt
         run: brew install git-crypt
       - name: Create key file
-        run: echo ${{env.GIT_CRYPT_KEY}} | base64 --decode > key
+        run: echo $GIT_CRYPT_KEY | base64 --decode > key
         env:
           GIT_CRYPT_KEY: ${{secrets.GIT_CRYPT_KEY}}
       - name: Checkout branch
