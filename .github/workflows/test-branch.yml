@@ -109,8 +109,8 @@ jobs:
           ref: ${{env.BRANCH_NAME}}
       - name: Unlock secrets
         if: env.COLUMN_NAME == 'In testing'
-        uses: sliteteam/github-action-git-crypt-unlock@1.0.2
-        env:
+        uses: korti11/git-crypt-unlock@v0.3
+        with:
           GIT_CRYPT_KEY: ${{ secrets.GIT_CRYPT_KEY }}
       - name: Setup JDK 1.8
         if: env.COLUMN_NAME == 'In testing'
@@ -156,7 +156,7 @@ jobs:
           ref: ${{env.BRANCH_NAME}}
       - name: Unlock secrets
         if: env.COLUMN_NAME == 'In testing'
-        uses: korti11/git-crypt-unlock@v0.2
+        uses: korti11/git-crypt-unlock@v0.3
         with:
           GIT_CRYPT_KEY: ${{ secrets.GIT_CRYPT_KEY }}
       - name: Run integration tests
