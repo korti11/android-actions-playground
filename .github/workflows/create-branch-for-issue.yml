@@ -32,6 +32,7 @@ jobs:
           json: ${{steps.issue.outputs.data}}
           number: "number"
           title: "title"
+      - run: echo ${{steps.issue_json.outputs.title}}
       - name: Formate title
         if: steps.project_column.outputs.column_name == 'In progress'
         id: formated_title
