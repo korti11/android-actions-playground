@@ -15,7 +15,7 @@ jobs:
         id: project_column
         uses: korti11/moved-to-column@v0.1
       - name: Get issue
-        if: steps.project_column.outputs.column_name == 'In progress'
+        if: steps.project_column.outputs.column_name == 'In testing'
         id: issue
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -25,14 +25,14 @@ jobs:
           Authorization: token ${{secrets.GITHUB_TOKEN}}
           mediaType: '{"previews": ["symmetra"]}'
       - name: Parse issue to JSON
-        if: steps.project_column.outputs.column_name == 'In progress'
+        if: steps.project_column.outputs.column_name == 'In testing'
         id: issue_json
         uses: gr2m/get-json-paths-action@v1.x
         with:
           json: ${{steps.issue.outputs.data}}
           number: "number"
       - name: Find branch
-        if: steps.project_column.outputs.column_name == 'In progress'
+        if: steps.project_column.outputs.column_name == 'In testing'
         id: find_branch
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -41,19 +41,19 @@ jobs:
           route: GET ${{format('https://api.github.com/repos/{0}/{1}/git/matching-refs/heads/feature/{2}', 'korti11', 'android-actions-playground', steps.issue_json.outputs.number)}}
           Authorization: token ${{secrets.GITHUB_TOKEN}}
       - name: Parse branch name to JSON
-        if: steps.project_column.outputs.column_name == 'In progress'
+        if: steps.project_column.outputs.column_name == 'In testing'
         id: branch_json
         uses: gr2m/get-json-paths-action@v1.x
         with:
           json: ${{steps.find_branch.outputs.data}}
           branch_name: "[0].ref"
       - name: Check out branch
-        if: steps.project_column.outputs.column_name == 'In progress'
+        if: steps.project_column.outputs.column_name == 'In testing'
         uses: actions/checkout@v1
         with:
           ref: ${{steps.branch_json.outputs.branch_name}}
       - name: Create pull request
-        if: steps.project_column.outputs.column_name == 'In progress'
+        if: steps.project_column.outputs.column_name == 'In testing'
         uses: repo-sync/pull-request@v2.0.1
         with:
           source_branch: ${{steps.branch_json.outputs.branch_name}}
