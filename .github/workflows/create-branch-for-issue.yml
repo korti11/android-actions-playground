@@ -31,22 +31,17 @@ jobs:
         with:
           json: ${{steps.issue.outputs.data}}
           number: "number"
-          title: "title"
-      - run: echo ${{steps.issue_json.outputs.title}}
-      - name: Formate title
+      - name: Generate branch name
         if: steps.project_column.outputs.column_name == 'In progress'
-        id: formated_title
-        uses: frabert/replace-string-action@v1.1
+        id: branch_name
+        uses: korti11/issue-to-branch-name@v0.1
         with:
-          pattern: '[ ]+'
-          flags: 'g'
-          string: ${{steps.issue_json.outputs.title}}
-          replace-with: '-'
-      - run: echo ${{steps.formated_title.outputs.replaced}}
+          issue: ${{steps.issue_json.outputs.number}}
+          prefix: 'feature/'
       - name: Create branch
         if: steps.project_column.outputs.column_name == 'In progress'
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         uses: peterjgrainger/action-create-branch@v1.0.0
         with:
-          branch: ${{format('feature/{0}-{1}', steps.issue_json.outputs.number, steps.formated_title.outputs.replaced)}}
+          branch: ${{steps.branch_name.outputs.branch_name}}
